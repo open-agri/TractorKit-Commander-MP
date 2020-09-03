@@ -1,0 +1,11 @@
+{
+    "python.linting.enabled": true,
+    "python.jediEnabled": false,
+
+    // Loaded Stubs:  esp32_LoBo-3.2.24 
+    "python.autoComplete.extraPaths": [".micropy/esp32_LoBo-3.2.24/frozen", ".micropy/esp32_LoBo-3.2.24/stubs", ".micropy/TractorKit-Commander-MP"],
+    "python.autoComplete.typeshedPaths":  [".micropy/esp32_LoBo-3.2.24/frozen", ".micropy/esp32_LoBo-3.2.24/stubs", ".micropy/TractorKit-Commander-MP"],
+    "python.analysis.typeshedPaths":  [".micropy/esp32_LoBo-3.2.24/frozen", ".micropy/esp32_LoBo-3.2.24/stubs", ".micropy/TractorKit-Commander-MP"],
+
+    "python.linting.pylintEnabled": true
+}

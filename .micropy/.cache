@@ -1,0 +1,6 @@
+{
+    "dev-packages": [
+        "micropy-cli"
+    ],
+    "packages": []
+}
