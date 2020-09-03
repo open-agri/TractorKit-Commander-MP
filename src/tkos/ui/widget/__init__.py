@@ -21,14 +21,18 @@ class Widget(object):
         self._children = []
         self._parent = None
 
+        self.draw()
+
     def pointerEvent(self):
         pass
 
     def addChild(self, child):
         self._children.append(child)
+        self.draw()
 
     def removeChild(self, child):
         self._children.remove(child)
+        self.draw()
 
     def drawChildren(self):
         self._display.savewin()
