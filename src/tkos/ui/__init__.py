@@ -8,4 +8,6 @@ class UI:
 
         # test
         x = Widget(40, 40, 40, 40)
+        y = Widget(30, 20, 30, 20)
+        x.addChild(y)
         x.draw()
