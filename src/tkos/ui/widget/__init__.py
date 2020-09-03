@@ -42,6 +42,7 @@ class Widget(object):
             if(parent._absolute_y is not None):
                 self._absolute_y = self._y + parent._absolute_y
 
+            self._parent = parent
             parent._children.append(self)
             parent.__drawTree()
         else:
@@ -74,8 +75,8 @@ class Widget(object):
     def resize(self, height = None, width = None):
         self._height = height or self.height
         self._width = width or self.width
+        print("Resizing", __name__, "to", (self._height, self._width))
         self.__drawTree()
-        print("Resized", __name__, "to", (self._height, self._width))
 
     def move(self, x = None, y = None):
         delta_x = x - self._x if x is not None else 0
@@ -83,8 +84,8 @@ class Widget(object):
         self.__updateAbsolutes(delta_x, delta_y)
         self._x += delta_x
         self._y += delta_y
+        print("Moving", __name__, "to", (self._x, self._y))
         self.__drawTree()
-        print("Moved", __name__, "by", (delta_x, delta_y))
 
     def pointerEvent(self):
         pass
@@ -108,7 +109,7 @@ class Widget(object):
 
     def __drawTree(self):
         if(self._parent is not None):
-            self._parent.drawTree()
+            self._parent.__drawTree()
         else:
             self._display.clear()
             self.__draw()
@@ -119,7 +120,8 @@ class Widget(object):
 
     def __draw(self):
         ## TEST DRAW
-        print("Drawing", __name__, "at", (self._x, self._y, self._width, self._height), "in", self._display.winsize())
+        print("Drawing", __name__, "at", (self._x, self._y, self._width, self._height), "in window of size", self._display.winsize())
         self._display.line(self._x, self._y, self._x + self._width - 1, self._y + self._height - 1, TFT.GREEN)
         self._display.line(self._x, self._y + self._height - 1, self._x + self._width - 1, self._y, TFT.GREEN)
         self._display.rect(self._x, self._y, self._width, self._height, TFT.GREEN)
+        
