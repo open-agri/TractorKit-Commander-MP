@@ -55,8 +55,19 @@ class WidgetDrawer(object):
         return WidgetDrawer._width
 
 
+class Alignment(object):
+    LEFT_OUT = TOP_OUT = 0
+    LEFT_IN = TOP_IN = 1
+    CENTER = 2
+    RIGHT_IN = BOTTOM_IN = 3
+    RIGHT_OUT = BOTTOM_OUT = 4
+    def __init__(self, horizontal=2, vertical=2):
+        self.hor = horizontal
+        self.ver = vertical
+        
+
 class Widget(object):
-    def __init__(self, x, y, width, height, display=None, parent=None):
+    def __init__(self, x, y, width, height, display:TFT=None, parent:Widget=None):
         self._x = x
         self._y = y
         self._width = width
@@ -66,15 +77,7 @@ class Widget(object):
         self._parent = None
 
         if parent is not None:
-            if parent._absolute_x is not None:
-                self._absolute_x = self._x + parent._absolute_x
-
-            if parent._absolute_y is not None :
-                self._absolute_y = self._y + parent._absolute_y
-
-            self._parent = parent
-            parent._children.append(self)
-            parent.drawTree()
+            self.__add_parent(parent)
         else:
             self._absolute_x = self._x
             self._absolute_y = self._y
@@ -96,6 +99,52 @@ class Widget(object):
     def height(self):
         return self._height
 
+    def __add_parent(self, parent:Widget):
+        if parent._absolute_x is not None:
+            self._absolute_x = self._x + parent._absolute_x
+        if parent._absolute_y is not None :
+            self._absolute_y = self._y + parent._absolute_y
+        self._parent = parent
+        parent._children.append(self)
+        parent.drawTree()
+
+    def addChild(self, child:Widget):
+        self._children.append(child)
+        child.__add_parent(self)
+
+    def align(self, alignment:Alignment=None):
+        if alignment is None:
+            alignment = Alignment()
+        
+        parentSize = (self._parent._width, self._parent._height) or self._display.screenSize()
+        newx = self._x
+        newy = self._y
+
+        if alignment.hor == Alignment.LEFT_OUT:
+            newx = -self._width
+        elif alignment.hor == Alignment.LEFT_IN:
+            newx = 0
+        elif alignment.hor == Alignment.CENTER:
+            newx = (parentSize[0] - self._width) / 2
+        elif alignment.hor == Alignment.RIGHT_IN:
+            newx = parentSize[0] - self._width
+        elif alignment.hor == Alignment.RIGHT_OUT:
+            newx = parentSize[0]
+
+        if alignment.ver == Alignment.TOP_OUT:
+            newy = -self._height
+        elif alignment.ver == Alignment.TOP_IN:
+            newy = 0
+        elif alignment.ver == Alignment.CENTER:
+            newy = (parentSize[1] - self._height) / 2
+        elif alignment.ver == Alignment.BOTTOM_IN:
+            newy = parentSize[1] - self._height
+        elif alignment.ver == Alignment.BOTTOM_OUT:
+            newy = parentSize[1]
+
+        print("Aligning", self)
+        self.move(int(newx), int(newy))
+
     def updateAbsolutes(self, delta_x, delta_y):
         self._absolute_x += delta_x
         self._absolute_y += delta_y
@@ -105,7 +154,7 @@ class Widget(object):
     def resize(self, height=None, width=None):
         self._height = height or self.height
         self._width = width or self.width
-        print("Resizing", __name__, "to", (self._height, self._width))
+        print("Resizing", self, "to", (self._height, self._width))
         self.drawTree()
 
     def move(self, x=None, y=None):
@@ -114,17 +163,17 @@ class Widget(object):
         self.updateAbsolutes(delta_x, delta_y)
         self._x += delta_x
         self._y += delta_y
-        print("Moving", __name__, "to", (self._x, self._y))
+        print("Moving", self, "to", (self._x, self._y))
         self.drawTree()
 
-    def pointerEvent(self, x, y, event):
+    def pointerEvent(self, x:int, y:int, event:HMIEvent):
         # Checks if the event happened inside the bounding box
         pass
 
-    def event(self, event):
+    def event(self, event:HMIEvent):
         pass
 
-    def removeChild(self, child):
+    def removeChild(self, child:Widget):
         self._children.remove(child)
         self.drawTree()
 

@@ -1,7 +1,8 @@
 from display import TFT
-from tkos.ui.widget import Widget, WidgetDrawer
+from tkos.ui.widget import Widget, WidgetDrawer, Alignment
 from tkos.ui.widget.rectangle import Rectangle
 from tkos.ui.widget.label import Label
+from tkos.ui.widget.barbutton import BarButton
 
 
 class UI:
@@ -15,5 +16,7 @@ class UI:
         self.x.resize(width=200, height=150)
         self.y.resize(100, 100)
 
-        self.t = Label(0, 0, parent=self.y, text="TEST")
-        self.t.text = "TEST\nTESTA\n\nTEST"
+        self.t = BarButton(20, 30, parent=self.y, text="Button")
+
+        self.y.align(alignment=Alignment())
+        self.t.align(alignment=Alignment())

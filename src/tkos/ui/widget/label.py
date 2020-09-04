@@ -39,5 +39,3 @@ class Label(Widget):
         print("Drawing", __name__, "at", (self._x, self._y, self._width, self._height), "in window of size", self._display.winsize())
         self._display.font(self._font, transparent=True)
         self._display.text(self._x, self._y, self._text, color=self._color)
-        self._display.rect(self._x, self._y, self._width,
-                           self._height, TFT.GREEN)
