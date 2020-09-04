@@ -10,6 +10,7 @@ class TKOS:
         print('Initializing tkos...')
         self.tft = None
         self.gui = None
+        self.encoder = None
 
     def start(self):
         print('Welcome to tkos')
@@ -24,7 +25,7 @@ class TKOS:
         self.tft.init(self.tft.ILI9488, mosi=13, miso=35, clk=14, cs=15, dc=2, speed=40000000,
                 width=self.display_width, height=self.display_height, rst_pin=4, backl_pin=27, backl_on=1,
                 rot=self.tft.LANDSCAPE_FLIP, bgr=True, splash=False)
-    
+
     def init_encoder(self):
         self.encoder = RotaryIRQ(25, 26, range_mode=drivers.Rotary.RANGE_UNBOUNDED)
 
