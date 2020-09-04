@@ -3,8 +3,11 @@ from tkos.ui.widget import Widget, WidgetDrawer
 
 class Label(Widget):
     def __init__(self, x, y, display=None, parent=None, font=TFT.FONT_DejaVu18, text=None, color=TFT.WHITE):
+        # TODO: Continue documentation (all files, not only widgets)
+        # TODO: Explicit properties
+        # TODO: Check other todos
         self._font = font
-        self._text = text or ""
+        self._text = text or ''
         self._color = color
 
         size = self.__compute_size()
