@@ -7,8 +7,14 @@ from tkos.ui.widget.barbutton import BarButton
 
 
 class UI:
-    def __init__(self, tft, width, height):
-        WidgetDrawer.init(tft, width, height)
+    """The TKOS user interface."""
+    def __init__(self, tft: TFT):
+        """Initializes the user interface.
+
+        Args:
+            tft (TFT): The display to use for the UI.
+        """
+        WidgetDrawer.init(tft)
 
         # test
         self.x = Widget(10, 10, 40, 40)  # , color=TFT.GREEN)

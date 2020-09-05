@@ -74,7 +74,7 @@ class BarButton(Rectangle):
 
     padding = property(__get_padding, __set_fgcolor)
 
-    
+
     # ----- Text property -----
 
     def __get_text(self):
