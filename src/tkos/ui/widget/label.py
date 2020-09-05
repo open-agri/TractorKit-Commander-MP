@@ -4,9 +4,17 @@ from tkos.ui.widget import Widget, WidgetDrawer
 class Label(Widget):
     """A text label."""
     def __init__(self, x, y, display=None, parent=None, font=TFT.FONT_DejaVu18, text=None, color=TFT.WHITE):
-        # TODO: Continue documentation (all files, not only widgets)
-        # TODO: Explicit properties
-        # TODO: Check other todos
+        """Creates a new label.
+
+        Args:
+            x (int): The x-coordinate.
+            y (int): The y-coordinate.
+            display (TFT, optional): The display. Defaults to the main display.
+            parent (Widget, optional): The parent widget. Defaults to None.
+            font (int, optional): The font to use on this text. Defaults to TFT.FONT_DejaVu18.
+            text (str, optional): The contents of the label. Defaults to None.
+            color (int, optional): The color of the text. Defaults to TFT.WHITE.
+        """
         self._font = font
         self._text = text or ''
         self._color = color
