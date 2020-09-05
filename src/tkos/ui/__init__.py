@@ -19,9 +19,12 @@ class UI:
         # test
         self.x = Widget(10, 10, 40, 40)  # , color=TFT.GREEN)
         self.y = Rectangle(30, 20, 30, 20, parent=self.x, color=TFT.BLUE)
-        self.x.move(x=100, y=100)
-        self.x.resize(width=200, height=150)
-        self.y.resize(100, 100)
+        self.x.x = 100
+        self.x.y = 100
+        self.x.width = 200
+        self.x.height = 150
+        self.y.x = 100
+        self.y.y = 100
 
         self.t = BarButton(20, 30, parent=self.y, text="Button")
 

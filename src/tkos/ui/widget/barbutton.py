@@ -81,6 +81,7 @@ class BarButton(Rectangle):
         return self._text
 
     def __set_text(self, text):
+        self.clear()
         self._text = text
         self._label.text = text
         self.draw()

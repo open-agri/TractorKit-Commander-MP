@@ -24,5 +24,5 @@ class Rectangle(Widget):
 
     def draw(self):
         """Draws this rectangle."""
-        print("Drawing", __name__, "at", (self._x, self._y, self._width, self._height), "in window of size", self._display.winsize())
-        self._display.rect(self._x, self._y, self._width, self._height, color = self._bgcolor, fillcolor = self._bgcolor)
+        print("Drawing", self, "at", (self.x, self.y, self.width, self.height), "in window of size", self._display.winsize())
+        self._display.rect(self.x, self.y, self.width, self.height, color = self._bgcolor, fillcolor = self._bgcolor)

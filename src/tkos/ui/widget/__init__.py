@@ -128,7 +128,7 @@ class Alignment(object):
 class Widget(object):
     """A generic widget."""
 
-    def __init__(self, x: int, y: int, width: int, height: int, display: TFT = None, parent: Widget = None):
+    def __init__(self, x: int, y: int, width: int, height: int, display: TFT=None, parent: Widget=None, fillsBox:bool=True):
         """Creates a new widget.
 
         Args:
@@ -146,12 +146,19 @@ class Widget(object):
         self._display = WidgetDrawer.getTFT() if (display is None) else display
         self._children = []
         self._parent = None
+        self._fillsBox = fillsBox
+
+        # For clearing
+        self._last_x = x
+        self._last_y = y
+        self._last_width = width
+        self._last_height = height
 
         if parent is not None:
             self.__add_parent(parent)
         else:
-            self._absolute_x = self._x
-            self._absolute_y = self._y
+            self._absolute_x = self.x
+            self._absolute_y = self.y
             self.draw()
 
     # ---------- Properties ----------
@@ -162,7 +169,8 @@ class Widget(object):
         return self._x
 
     def __set_x(self, x):
-        self.move(x=x)
+        self._last_x = self._x
+        self.__move(x=x)
 
     x = property(__get_x, __set_x)
 
@@ -172,7 +180,8 @@ class Widget(object):
         return self._y
 
     def __set_y(self, y):
-        self.move(y=y)
+        self._last_y = self._y
+        self.__move(y=y)
 
     y = property(__get_y, __set_y)
 
@@ -182,7 +191,8 @@ class Widget(object):
         return self._width
 
     def __set_width(self, width):
-        self.resize(width=width)
+        self._last_width = self._width
+        self.__resize(width=width)
 
     width = property(__get_width, __set_width)
 
@@ -192,7 +202,8 @@ class Widget(object):
         return self._height
 
     def __set_height(self, height):
-        self.resize(height=height)
+        self._last_height = self._height
+        self.__resize(height=height)
 
     height = property(__get_height, __set_height)
 
@@ -205,9 +216,9 @@ class Widget(object):
             parent (Widget): The parent.
         """
         if parent._absolute_x is not None:
-            self._absolute_x = self._x + parent._absolute_x
+            self._absolute_x = self.x + parent._absolute_x
         if parent._absolute_y is not None:
-            self._absolute_y = self._y + parent._absolute_y
+            self._absolute_y = self.y + parent._absolute_y
         self._parent = parent
         parent._children.append(self)
         parent.drawTree()
@@ -232,32 +243,32 @@ class Widget(object):
 
         parentSize = (self._parent._width,
                       self._parent._height) or self._display.screenSize()
-        newx = self._x
-        newy = self._y
+        newx = self.x
+        newy = self.y
 
         if alignment.hor == Alignment.LEFT_OUT:
-            newx = -self._width
+            newx = -self.width
         elif alignment.hor == Alignment.LEFT_IN:
             newx = 0
         elif alignment.hor == Alignment.CENTER:
-            newx = (parentSize[0] - self._width) / 2
+            newx = (parentSize[0] - self.width) / 2
         elif alignment.hor == Alignment.RIGHT_IN:
-            newx = parentSize[0] - self._width
+            newx = parentSize[0] - self.width
         elif alignment.hor == Alignment.RIGHT_OUT:
             newx = parentSize[0]
 
         if alignment.ver == Alignment.TOP_OUT:
-            newy = -self._height
+            newy = -self.height
         elif alignment.ver == Alignment.TOP_IN:
             newy = 0
         elif alignment.ver == Alignment.CENTER:
-            newy = (parentSize[1] - self._height) / 2
+            newy = (parentSize[1] - self.height) / 2
         elif alignment.ver == Alignment.BOTTOM_IN:
-            newy = parentSize[1] - self._height
+            newy = parentSize[1] - self.height
         elif alignment.ver == Alignment.BOTTOM_OUT:
             newy = parentSize[1]
 
-        self.move(int(newx), int(newy))
+        self.__move(int(newx), int(newy))
 
     def updateAbsolutes(self, delta_x:int, delta_y:int):
         """Updates the absolute coordinates for this widget and its descendants.
@@ -271,7 +282,7 @@ class Widget(object):
         for child in self._children:
             child.updateAbsolutes(delta_x, delta_y)
 
-    def resize(self, width:int=None, height:int=None):
+    def __resize(self, width:int=None, height:int=None):
         """Resizes this widget.
 
         Args:
@@ -280,22 +291,22 @@ class Widget(object):
         """
         self._height = height or self.height
         self._width = width or self.width
-        print("Resizing", self, "to", (self._height, self._width))
+        print("Resizing", self, "to", (self.height, self.width))
         self.drawTree()
 
-    def move(self, x:int=None, y:int=None):
+    def __move(self, x:int=None, y:int=None):
         """Moves this widget to new coordinates.
 
         Args:
             x (int, optional): The new x-coordinate. Defaults to None.
             y (int, optional): The new y-coordinate. Defaults to None.
         """
-        delta_x = x - self._x if x is not None else 0
-        delta_y = y - self._y if y is not None else 0
+        delta_x = x - self.x if x is not None else 0
+        delta_y = y - self.y if y is not None else 0
         self.updateAbsolutes(delta_x, delta_y)
         self._x += delta_x
         self._y += delta_y
-        print("Moving", self, "to", (self._x, self._y))
+        print("Moving", self, "to", (self.x, self.y))
         self.drawTree()
 
     def pointerEvent(self, x: int, y: int, event: HMIEvent):
@@ -315,6 +326,7 @@ class Widget(object):
         Args:
             event (HMIEvent): The event.
         """
+        # TODO: Clear?
         pass
 
     def removeChild(self, child: Widget):
@@ -328,15 +340,15 @@ class Widget(object):
 
     def drawChildren(self):
         if self._parent is not None:
-            winwidth = self._parent.width - self._x if self._x + \
-                self._width > self._parent.width else self._width
-            winheight = self._parent.width - self._y if self._y + \
-                self._height > self._parent.width else self._height
+            winwidth = self._parent.width - self.x if self.x + \
+                self.width > self._parent.width else self.width
+            winheight = self._parent.width - self.y if self.y + \
+                self.height > self._parent.width else self.height
         else:
-            winwidth = WidgetDrawer.getWidth() - self._x if self._x + \
-                self._width > WidgetDrawer.getWidth() else self._width
-            winheight = WidgetDrawer.getHeight() - self._y if self._y + \
-                self._height > WidgetDrawer.getHeight() else self._height
+            winwidth = WidgetDrawer.getWidth() - self.x if self.x + \
+                self.width > WidgetDrawer.getWidth() else self.width
+            winheight = WidgetDrawer.getHeight() - self.y if self.y + \
+                self.height > WidgetDrawer.getHeight() else self.height
 
         self._display.setwin(self._absolute_x, self._absolute_y,
                              self._absolute_x + winwidth - 1, self._absolute_y + winheight - 1)
@@ -344,12 +356,21 @@ class Widget(object):
             child.draw()
             child.drawChildren()
 
+    def clearOld(self):
+        """Clears this widget's last position from the screen."""
+        # TODO: Use dynamic background color
+        print("Clearing", self, "at", (self.x, self.y, self.width, self.height))
+        self._display.rect(self.x, self.y, self.width, self.height, fillcolor=TFT.BLACK, color=TFT.BLACK)
+
+
     def drawTree(self):
         """Redraws the widget tree."""
-        if self._parent is not None:
+        if self._parent is not None and not self._parent._fillsBox:
+            # If parent exists and does not fill its box, go up
             self._parent.drawTree()
         else:
-            self._display.clear()
+            # Otherwise clear, draw myself and my children
+            self.clearOld()
             self.draw()
             self._display.savewin()
             self.drawChildren()
@@ -358,7 +379,7 @@ class Widget(object):
     def draw(self):
         """Draws this widget."""
         # TEST DRAW
-        print("Drawing", __name__, "at", (self._x, self._y, self._width,
-                                          self._height), "in window of size", self._display.winsize())
-        self._display.rect(self._x, self._y, self._width,
-                           self._height, TFT.GREEN)
+        print("Drawing", self, "at", (self.x, self.y, self.width,
+                                          self.height), "in window of size", self._display.winsize())
+        self._display.rect(self.x, self.y, self.width,
+                           self.height, TFT.GREEN)

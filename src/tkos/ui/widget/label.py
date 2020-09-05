@@ -3,7 +3,7 @@ from tkos.ui.widget import Widget, WidgetDrawer
 
 class Label(Widget):
     """A text label."""
-    def __init__(self, x, y, display=None, parent=None, font=TFT.FONT_DejaVu18, text=None, color=TFT.WHITE):
+    def __init__(self, x:int, y:int, display:TFT=None, parent:Widget=None, font=TFT.FONT_DejaVu18, text:str=None, color=TFT.WHITE):
         """Creates a new label.
 
         Args:
@@ -20,7 +20,7 @@ class Label(Widget):
         self._color = color
 
         size = self.__compute_size()
-        super().__init__(x, y, size[0], size[1], display, parent)
+        super().__init__(x, y, size[0], size[1], display, parent, fillsBox=False)
 
     # ---------- Properties ----------
 
@@ -32,7 +32,7 @@ class Label(Widget):
     def __set_text(self, text):
         self._text = text or ""
         size = self.__compute_size()
-        self.resize(width=size[0], height=size[1])
+        self.__resize(width=size[0], height=size[1])
 
     text = property(__get_text, __set_text)
 
@@ -77,6 +77,6 @@ class Label(Widget):
 
     def draw(self):
         """Draws the widget."""
-        print("Drawing", __name__, "at", (self._x, self._y, self._width, self._height), "in window of size", self._display.winsize())
+        print("Drawing", self, "at", (self.x, self.y, self.width, self.height), "in window of size", self._display.winsize())
         self._display.font(self._font, transparent=True)
-        self._display.text(self._x, self._y, self._text, color=self._color)
+        self._display.text(self.x, self.y, self._text, color=self._color)
