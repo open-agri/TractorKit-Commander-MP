@@ -1,12 +1,17 @@
 # main.py
 import machine
 import micropython
-from tkos import TKOS
+
+import lvgl as lv
+import lvesp32
 
 micropython.alloc_emergency_exception_buf(100)
 
-machine.freq(240)
+machine.freq(240000000)
 
-os = TKOS()
-os.start()
+# Import ILI9341 driver and initialized it
+from ili9XXX import ili9488
+disp = ili9488(factor=16)
+
+
 

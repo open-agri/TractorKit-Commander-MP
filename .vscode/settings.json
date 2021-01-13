@@ -8,5 +8,6 @@
     "python.analysis.typeshedPaths":  [".micropy/esp32_LoBo-3.2.24/frozen", ".micropy/esp32_LoBo-3.2.24/stubs", ".micropy/TractorKit-Commander-MP"],
 
     "python.linting.pylintEnabled": true,
-    "python.languageServer": "Microsoft"
+    "python.languageServer": "Microsoft",
+    "python.pythonPath": "/bin/python"
 }
